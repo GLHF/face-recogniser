@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import ru.kpfu.itis.timm.facerecogniser.service.api.ImageService;
 
 import java.io.IOException;
 
@@ -17,10 +16,9 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class ImageController {
-    private final ImageService imageService;
 
     @PostMapping("/recognise")
-    public ResponseEntity recognise(@RequestParam("image") MultipartFile image) throws IOException {
-        return ResponseEntity.ok(imageService.recognise(image));
+    public ResponseEntity recognise() throws IOException {
+        return ResponseEntity.ok("Hello");
     }
 }

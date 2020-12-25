@@ -34,9 +34,4 @@ public class ImageController {
                 StandardCopyOption.REPLACE_EXISTING);
         return ResponseEntity.ok(imageService.recognise(file));
     }
-
-    @PostMapping("/test")
-    public ResponseEntity test() throws IOException {
-        return ResponseEntity.ok(new ObjectMapper().writeValueAsString(Arrays.asList("Идите", "В", "ЖОПУ")));
-    }
 }

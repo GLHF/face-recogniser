@@ -2,6 +2,7 @@ package ru.kpfu.itis.timm.facerecogniser.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -33,23 +37,25 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional
-    public ZofaceResponse recognise(MultipartFile image) throws IOException {
-        File file = convert(image);
+    public ZofaceResponse recognise(File file) throws IOException {
         Image imageModel = upload(file);
         imageRepository.save(imageModel);
         ZofaceResponse zofaceResponse = zofaceProxy.recognise(URI.create(zufaceUrl), file, "1");
         zofaceResponse.setUrl(imageModel.getUrl());
         if (zofaceResponse.getFaces() != null) {
             for (Face face : zofaceResponse.getFaces()) {
+                File fileFace = File.createTempFile(UUID.randomUUID().toString(), "." + FilenameUtils.getExtension(file.getName()));
                 BufferedImage faceImage = cropImage(ImageIO.read(file), face);
-                ImageIO.write(faceImage, "jpg", file);
-                Image faceImageModel = upload(file);
+                ImageIO.write(faceImage, FilenameUtils.getExtension(fileFace.getName()), fileFace);
+                Image faceImageModel = upload(fileFace);
                 faceImageModel.setParrent(imageModel);
                 imageRepository.save(faceImageModel);
+                fileFace.delete();
 
                 face.setUrl(faceImageModel.getUrl());
             }
         }
+        file.delete();
         return zofaceResponse;
     }
 
@@ -64,19 +70,5 @@ public class ImageServiceImpl implements ImageService {
     private BufferedImage cropImage(BufferedImage src, Face face) {
         BufferedImage dest = src.getSubimage(face.getX(), face.getY(), face.getW(), face.getH());
         return dest;
-    }
-
-    private File convert(MultipartFile file) {
-        File convFile = new File(file.getOriginalFilename());
-        try {
-            convFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return convFile;
     }
 }

@@ -1,14 +1,12 @@
 server:
   port: ${SERVER_PORT:8080}
-  servlet:
-    context-path: /api/v1/recogniser
   max-http-header-size: 32MB
 
 spring:
   application:
     name: recogniser
   datasource:
-    url: jdbc:postgresql://${DB_URL:localhost:5432}/${AUTH_DB_NAME:image_db}
+    url: jdbc:postgresql://${DB_URL:image-db.cmktijhbzssz.us-east-2.rds.amazonaws.com:5432}/${AUTH_DB_NAME:image_db}
     username: ${AUTH_POSTGRES_USER:postgres}
     password: ${AUTH_POSTGRES_PASSWORD:postgres}
   jpa:
@@ -19,7 +17,7 @@ spring:
             non_contextual_creation: true
         current_session_context_class: thread
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 zuface:
   apikey: ${ZOFACE_TOKEN:NzYzMzQxNmU2Y2Y0NGMxZGEyZDY4OTdjNmJiOTZjZGUxNTg5YmViMzJlODM0ZjI4ODBmMjA1NGViMTc5MTc5MQ==}

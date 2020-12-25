@@ -1,3 +1,29 @@
 server:
   port: ${SERVER_PORT:8080}
   max-http-header-size: 32MB
+
+spring:
+  application:
+    name: recogniser
+  datasource:
+    url: jdbc:postgresql://${DB_URL:image-db.cmktijhbzssz.us-east-2.rds.amazonaws.com:5432}/${AUTH_DB_NAME:image_db}
+    username: ${AUTH_POSTGRES_USER:postgres}
+    password: ${AUTH_POSTGRES_PASSWORD:postgres}
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        current_session_context_class: thread
+    hibernate:
+      ddl-auto: update
+
+zuface:
+  apikey: ${ZOFACE_TOKEN:NzYzMzQxNmU2Y2Y0NGMxZGEyZDY4OTdjNmJiOTZjZGUxNTg5YmViMzJlODM0ZjI4ODBmMjA1NGViMTc5MTc5MQ==}
+  api-base-url: ${ZOFACE_BASE_URL:/api/v1}
+  host: ${ZOFACE_HOST:https://zuface.com}
+  url: ${ZOFACE_URL:https://zuface.com/api/v1/faces/detect}
+
+cloudinary:
+  url: ${CLOUDINARY_URL:cloudinary://749131777977669:U42aJA_v0E9T3AGu926mObF0CXQ@dypsks6dr}
